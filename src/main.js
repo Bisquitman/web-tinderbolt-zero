@@ -1,6 +1,12 @@
-require('dotenv').config({path: "../.env"});
+require("dotenv").config({ path: "../.env" });
+const { createServer } = require("node:http");
+const PORT = 3000;
+const server = createServer(() => {});
+server.listen(PORT, "localhost", () => {
+  console.log(`Сервер запущен по адресу http://localhost:${PORT}`);
+});
 
-const {HtmlTelegramBot, userInfoToString} = require("./bot");
+const { HtmlTelegramBot, userInfoToString } = require("./bot");
 const ChatGptService = require("./gpt");
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -31,40 +37,40 @@ class MyTelegramBot extends HtmlTelegramBot {
       "/gpt": "задать вопрос чату GPT 🧠",
       "/html": "Демо HTML",
     });
-  };
+  }
 
   async html() {
     await this.sendHTML('<h3 style="color: #1558b0;"> Привет! </h3>');
     const html = this.loadHtml("main");
-    await this.sendHTML(html, {theme: "dark"});
-  };
+    await this.sendHTML(html, { theme: "dark" });
+  }
 
   async gpt() {
     this.mode = "gpt";
     const text = this.loadMessage("gpt");
     await this.sendImage("gpt");
     await this.sendText(text);
-  };
+  }
 
   async gptDialog(msg) {
     const text = msg.text;
     const myMessage = await this.sendText("Думает над ответом...");
     const answer = await chatgpt.sendQuestion("Ответь на вопрос:", text);
     await this.editText(myMessage, answer);
-  };
+  }
 
   async date() {
     this.mode = "date";
     const text = this.loadMessage("date");
     await this.sendImage("date");
     await this.sendTextButtons(text, {
-      "date_grande": "Ариана Гранде",
-      "date_robbie": "Марго Робби",
-      "date_zendaya": "Зендея",
-      "date_gosling": "Райан Гослинг",
-      "date_hardy": "Том Харди",
+      date_grande: "Ариана Гранде",
+      date_robbie: "Марго Робби",
+      date_zendaya: "Зендея",
+      date_gosling: "Райан Гослинг",
+      date_hardy: "Том Харди",
     });
-  };
+  }
 
   async dateButton(callbackQuery) {
     const query = callbackQuery.data;
@@ -72,7 +78,7 @@ class MyTelegramBot extends HtmlTelegramBot {
     await this.sendText("Отличный выбор! Пригласи девушку/парня на свидание за 5 сообщений:");
     const prompt = this.loadPrompt(query);
     chatgpt.setPrompt(prompt);
-  };
+  }
 
   async dateDialog(msg) {
     const text = msg.text;
@@ -80,7 +86,7 @@ class MyTelegramBot extends HtmlTelegramBot {
     const answer = await chatgpt.addMessage(text);
     // await this.sendText(answer);
     await this.editText(myMessage, answer);
-  };
+  }
 
   async message() {
     this.mode = "message";
@@ -88,10 +94,10 @@ class MyTelegramBot extends HtmlTelegramBot {
     const text = this.loadMessage("message");
     await this.sendImage("message");
     await this.sendTextButtons(text, {
-      "message_next": "Следующее сообщение",
-      "message_date": "Пригласить на свидание",
+      message_next: "Следующее сообщение",
+      message_date: "Пригласить на свидание",
     });
-  };
+  }
 
   async messageButton(callbackQuery) {
     const query = callbackQuery.data;
@@ -100,12 +106,12 @@ class MyTelegramBot extends HtmlTelegramBot {
     const myMessage = await this.sendText("Думает над ответом...");
     const answer = await chatgpt.sendQuestion(prompt, userChatHistory);
     await this.editText(myMessage, answer);
-  };
+  }
 
   async messageDialog(msg) {
     const text = msg.text;
     this.list.push(text);
-  };
+  }
 
   async profile() {
     this.mode = "profile";
@@ -116,7 +122,7 @@ class MyTelegramBot extends HtmlTelegramBot {
     this.user = {};
     this.count = 0;
     await this.sendText("1. Сколько вам лет?");
-  };
+  }
 
   async profileDialog(msg) {
     const text = msg.text;
@@ -152,7 +158,7 @@ class MyTelegramBot extends HtmlTelegramBot {
       const answer = await chatgpt.sendQuestion(prompt, info);
       await this.editText(myMessage, answer);
     }
-  };
+  }
 
   async opener() {
     this.mode = "opener";
@@ -163,7 +169,7 @@ class MyTelegramBot extends HtmlTelegramBot {
     this.user = {};
     this.count = 0;
     await this.sendText("1. Имя девушки?");
-  };
+  }
 
   async openerDialog(msg) {
     const text = msg.text;
@@ -199,7 +205,7 @@ class MyTelegramBot extends HtmlTelegramBot {
       const answer = await chatgpt.sendQuestion(prompt, info);
       await this.editText(myMessage, answer);
     }
-  };
+  }
 
   async hello(msg) {
     if (this.mode === "gpt") await this.gptDialog(msg);
@@ -214,11 +220,11 @@ class MyTelegramBot extends HtmlTelegramBot {
       await this.sendText(`Вы писали: ${text}`);
       await this.sendImage("avatar_main");
       await this.sendTextButtons("Какая у вас тема в Telegram?", {
-        "theme_light": "Светлая",
-        "theme_dark": "Тёмная",
+        theme_light: "Светлая",
+        theme_dark: "Тёмная",
       });
     }
-  };
+  }
 
   async helloButton(callbackQuery) {
     const query = callbackQuery.data;
@@ -228,7 +234,7 @@ class MyTelegramBot extends HtmlTelegramBot {
     } else if (query === "theme_dark") {
       await this.sendText(`Ваша тема Тёмная`);
     }
-  };
+  }
 }
 
 const chatgpt = new ChatGptService(GPT_TOKEN);
