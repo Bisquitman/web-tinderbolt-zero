@@ -1,10 +1,18 @@
 require("dotenv").config({ path: "../.env" });
-const { createServer } = require("node:http");
-const PORT = process.env.PORT || 3000;
-const server = createServer(() => {});
-server.listen(PORT, "localhost", () => {
-  console.log(`Сервер запущен по адресу http://localhost:${PORT}`);
+
+// Server
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 4000;
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+// Server
 
 const { HtmlTelegramBot, userInfoToString } = require("./bot");
 const ChatGptService = require("./gpt");
