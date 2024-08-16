@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "../.env" });
 const { createServer } = require("node:http");
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const server = createServer(() => {});
 server.listen(PORT, "localhost", () => {
   console.log(`Сервер запущен по адресу http://localhost:${PORT}`);
